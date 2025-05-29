@@ -16,3 +16,5 @@ class TestMenu(unittest.TestCase):
     def test_initialization(self):
         self.assertEqual(self.menu.options, self.menu_options)
         self.assertEqual(self.menu.selected_option_index, 0)
+    def test_move_selection_down(self):
+        self.menu.move_selection_down()
