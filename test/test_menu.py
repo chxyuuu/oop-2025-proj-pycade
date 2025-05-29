@@ -24,3 +24,5 @@ class TestMenu(unittest.TestCase):
         # 測試循環到開頭
         self.menu.move_selection_down()
         self.assertEqual(self.menu.selected_option_index, 0)
+    def test_move_selection_up(self):
+        self.menu.move_selection_up() # 從 0 移到最後一個
