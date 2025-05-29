@@ -29,3 +29,7 @@ class TestMenu(unittest.TestCase):
         self.assertEqual(self.menu.selected_option_index, len(self.menu_options) - 1)
         self.menu.move_selection_up()
         self.assertEqual(self.menu.selected_option_index, len(self.menu_options) - 2)
+    def test_get_selected_option(self):
+        self.assertEqual(self.menu.get_selected_option(), "Start Game")
+        self.menu.move_selection_down()
+        self.assertEqual(self.menu.get_selected_option(), "Options")
