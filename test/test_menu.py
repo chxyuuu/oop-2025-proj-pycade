@@ -28,3 +28,4 @@ class TestMenu(unittest.TestCase):
         self.menu.move_selection_up() # 從 0 移到最後一個
         self.assertEqual(self.menu.selected_option_index, len(self.menu_options) - 1)
         self.menu.move_selection_up()
+        self.assertEqual(self.menu.selected_option_index, len(self.menu_options) - 2)
