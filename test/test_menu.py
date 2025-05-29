@@ -20,3 +20,4 @@ class TestMenu(unittest.TestCase):
         self.menu.move_selection_down()
         self.assertEqual(self.menu.selected_option_index, 1)
         self.menu.move_selection_down()
+        self.assertEqual(self.menu.selected_option_index, 2)
