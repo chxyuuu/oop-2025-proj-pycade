@@ -24,3 +24,7 @@ class TestPlayer(unittest.TestCase):
         # 測試生命值不會變成負數
         self.player.lose_life()
         self.assertEqual(self.player.lives, 0)
+
+if __name__ == '__main__':
+    unittest.main()
+    
