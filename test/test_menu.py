@@ -26,3 +26,4 @@ class TestMenu(unittest.TestCase):
         self.assertEqual(self.menu.selected_option_index, 0)
     def test_move_selection_up(self):
         self.menu.move_selection_up() # 從 0 移到最後一個
+        self.assertEqual(self.menu.selected_option_index, len(self.menu_options) - 1)
