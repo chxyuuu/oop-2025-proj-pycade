@@ -8,3 +8,5 @@ class TestMenu(unittest.TestCase):
                 pass
             def fill(self, color):
                 pass
+            def blit(self, surface, rect):
+                pass
