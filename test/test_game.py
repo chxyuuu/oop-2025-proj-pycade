@@ -17,3 +17,7 @@ class TestGame(unittest.TestCase):
         self.game.start_game()
         self.game.end_game()
         self.assertFalse(self.game.is_running)
+    def test_update_score(self):
+        initial_score = self.player.score
+        self.game.update_game_score(self.player, 100) # 假設有這個方法
+        self.assertEqual(self.player.score, initial_score + 100)
