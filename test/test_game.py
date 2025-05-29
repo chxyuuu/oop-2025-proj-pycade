@@ -26,3 +26,5 @@ class TestGame(unittest.TestCase):
          self.player.lives = 0
          self.game.check_game_over() # 假設有這個方法來檢查遊戲是否結束
          self.assertFalse(self.game.is_running)
+    if __name__ == '__main__':
+        unittest.main()
