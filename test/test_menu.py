@@ -6,3 +6,5 @@ class TestMenu(unittest.TestCase):
         class MockScreen:
             def __init__(self):
                 pass
+            def fill(self, color):
+                pass
