@@ -21,3 +21,8 @@ class TestGame(unittest.TestCase):
         initial_score = self.player.score
         self.game.update_game_score(self.player, 100) # 假設有這個方法
         self.assertEqual(self.player.score, initial_score + 100)
+    def test_game_over(self):
+    # 假設遊戲結束的條件是玩家生命值為 0
+         self.player.lives = 0
+         self.game.check_game_over() # 假設有這個方法來檢查遊戲是否結束
+         self.assertFalse(self.game.is_running)
