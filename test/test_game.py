@@ -9,4 +9,7 @@ class TestGame(unittest.TestCase):
         self.game.add_player(self.player) # 假設 Game 有 add_player 方法
     def test_initialization(self):
         self.assertFalse(self.game.is_running)
-       
+        self.assertEqual(len(self.game.players), 1) # 假設 Game 內部維護一個 players 列表
+    def test_start_game(self):
+        self.game.start_game()
+        self.assertTrue(self.game.is_running)
