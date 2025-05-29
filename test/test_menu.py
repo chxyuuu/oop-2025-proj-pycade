@@ -10,3 +10,6 @@ class TestMenu(unittest.TestCase):
                 pass
             def blit(self, surface, rect):
                 pass
+        self.mock_screen = MockScreen()
+        self.menu_options = ["Start Game", "Options", "Exit"]
+        self.menu = Menu(self.mock_screen, self.menu_options)
