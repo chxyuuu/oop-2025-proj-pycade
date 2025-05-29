@@ -13,3 +13,7 @@ class TestGame(unittest.TestCase):
     def test_start_game(self):
         self.game.start_game()
         self.assertTrue(self.game.is_running)
+    def test_end_game(self):
+        self.game.start_game()
+        self.game.end_game()
+        self.assertFalse(self.game.is_running)
