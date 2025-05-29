@@ -33,3 +33,5 @@ class TestMenu(unittest.TestCase):
         self.assertEqual(self.menu.get_selected_option(), "Start Game")
         self.menu.move_selection_down()
         self.assertEqual(self.menu.get_selected_option(), "Options")
+if __name__ == '__main__':
+    unittest.main()
