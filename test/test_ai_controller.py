@@ -109,4 +109,116 @@ class TestAIControllerBase:
         assert ai_controller.astar_planned_path == []
         assert ai_controller.current_movement_sub_path == []
         assert ai_controller.last_known_tile == (ai_player.tile_x, ai_player.tile_y)
+    
+    def test_astar_find_path_simple_clear_path(self, mock_ai_base_env):
+        """測試 A* 演算法在簡單、無障礙地圖上的路徑尋找。"""
+        ai_controller, game, ai_player = mock_ai_base_env
+        
+        # 地圖:
+        # WWWWW
+        # W.D.W  (AI start at (1,1) which is '.')
+        # W.W.W
+        # W...W  (Target (1,3) which is '.')
+        # WWWWW
+        
+        ai_player.tile_x, ai_player.tile_y = 1, 1 # 設定 AI 起點
+        start_coords = (1, 1)
+        target_coords = (1, 3) # 目標是一個可直接到達的空格
+
+        # 更新 map_data 以確保 (1,2) 是可通行的 '.'
+        game.map_manager.map_data = [
+            "WWWWW",
+            "W...W", # (1,1) (2,1) (3,1) are '.'
+            "W.W.W",
+            "W...W", # (1,3) is '.'
+            "WWWWW"
+        ]
+        game.map_manager.tile_height = len(game.map_manager.map_data)
+        game.map_manager.tile_width = len(game.map_manager.map_data[0])
+        
+        # 重新設定 AI 控制器的 map_manager 參考 (如果 MapManager 是深度複製的話)
+        # 或者確保 AIControllerBase 中的 _get_node_at_coords 使用最新的 map_data
+        # 這裡假設 AIControllerBase 會動態查詢 MapManager
+
+        path_nodes = ai_controller.astar_find_path(start_coords, target_coords)
+        
+        assert path_nodes is not None, "A* 演算法應找到一條路徑。"
+        assert len(path_nodes) > 0, "路徑不應為空。"
+        
+        # 驗證路徑的起點和終點
+        assert (path_nodes[0].x, path_nodes[0].y) == start_coords, "路徑起點應為 AI 目前位置。"
+        assert (path_nodes[-1].x, path_nodes[-1].y) == target_coords, "路徑終點應為目標位置。"
+        
+        # 驗證路徑的連續性和每個節點的類型 (在這個簡單例子中，應該都是 '.')
+        expected_path_coords = [(1,1), (1,2), (1,3)] # 這是針對修改後的地圖
+        
+        # 針對修改後的地圖，(1,2) 應該是 '.'
+        game.map_manager.map_data = [  # 確保 (1,2) 是 '.'
+            "WWWWW",
+            "W...W", 
+            "W.W.W", # (1,2) 這裡還是 '.', 但 A* 應該走 (1,1)->(2,1)->(3,1)->(3,2)->(3,3)->(2,3)->(1,3)
+                     # 不對，如果目標是 (1,3)，且 (1,1) (1,2) (1,3) 都是 '.'
+                     # 那路徑應該是 (1,1) -> (1,2) -> (1,3)
+            "W...W", 
+            "WWWWW"
+        ]
+        # 為了讓 (1,1) -> (1,2) -> (1,3) 成立，我們需要確保 (1,2) 也是 '.'
+        # 讓我們修改地圖讓這條路更直接
+        game.map_manager.map_data = [
+            "WWWWW", # Row 0
+            "W...W", # Row 1: (1,1) is '.', (2,1) is '.', (3,1) is '.'
+            "W.W.W", # Row 2: (1,2) is '.', (2,2) is 'W', (3,2) is '.'
+            "W...W", # Row 3: (1,3) is '.', (2,3) is '.', (3,3) is '.'
+            "WWWWW"  # Row 4
+        ]
+        # 修正：如果 (1,2) 是牆，A* 會繞路。我們測試的是簡單清晰路徑。
+        # 假設地圖是：
+        # WWWWW
+        # W.W.W  <-- AI 在 (1,1)
+        # W...W  <-- 目標在 (1,2)
+        # WWWWW
+        game.map_manager.map_data = [
+            "WWWWW", #0
+            "W.W.W", #1  (1,1) is '.'
+            "W...W", #2  (1,2) is '.'
+            "WWWWW"  #3
+        ]
+        game.map_manager.tile_height = len(game.map_manager.map_data)
+        game.map_manager.tile_width = len(game.map_manager.map_data[0])
+        ai_player.tile_x, ai_player.tile_y = 1, 1
+        start_coords = (1,1)
+        target_coords = (1,2) # 目標現在是 (1,2)
+        
+        path_nodes = ai_controller.astar_find_path(start_coords, target_coords)
+        assert path_nodes is not None
+        assert len(path_nodes) == 2 # (1,1) -> (1,2)
+        assert (path_nodes[0].x, path_nodes[0].y) == start_coords
+        assert (path_nodes[1].x, path_nodes[1].y) == target_coords
+        assert path_nodes[0].tile_char == '.'
+        assert path_nodes[1].tile_char == '.'
+
+        # 測試一個稍微長一點的清晰路徑
+        # WWWWW
+        # W...W  <-- AI 在 (1,1), 目標 (3,1)
+        # WWWWW
+        game.map_manager.map_data = [
+            "WWWWW",
+            "W...W", # (1,1), (2,1), (3,1) are all '.'
+            "WWWWW"
+        ]
+        game.map_manager.tile_height = len(game.map_manager.map_data)
+        game.map_manager.tile_width = len(game.map_manager.map_data[0])
+        ai_player.tile_x, ai_player.tile_y = 1, 1
+        start_coords = (1,1)
+        target_coords = (3,1)
+        path_nodes = ai_controller.astar_find_path(start_coords, target_coords)
+        assert path_nodes is not None
+        assert len(path_nodes) == 3 # (1,1) -> (2,1) -> (3,1)
+        actual_path_coords = [(n.x, n.y) for n in path_nodes]
+        expected_path_coords = [(1,1), (2,1), (3,1)]
+        assert actual_path_coords == expected_path_coords
+        for node in path_nodes:
+            assert node.tile_char == '.', f"Node {node} in clear path should be '.' but is '{node.tile_char}'"
+
+
 
